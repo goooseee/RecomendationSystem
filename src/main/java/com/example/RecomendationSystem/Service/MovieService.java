@@ -32,7 +32,7 @@ public class MovieService {
 	
 	public Movie saveMovie(CreateMovieDTO createMovieDTO) {
 		Movie movie = new Movie(createMovieDTO.getTitle(),createMovieDTO.getTypes(),
-				 createMovieDTO.getDuration() );
+				 createMovieDTO.getDuration(), createMovieDTO.getRating());
 		System.out.println( createMovieDTO.getTitle() +" "+ createMovieDTO.getTypes() );
 		return movieRepository.save( movie );
 	}
@@ -42,7 +42,7 @@ public class MovieService {
 	
 	public List<Movie> getAllUnWatched(List<Long> ids){
 		if(ids.isEmpty()) {
-			return movieRepository.findTop100OrderByRatingDesc();
+			return movieRepository.findTop100ByOrderByRatingDesc();
 		}
 		return movieRepository.findTop100ByIdNotInOrderByRatingDesc( ids );
 	}

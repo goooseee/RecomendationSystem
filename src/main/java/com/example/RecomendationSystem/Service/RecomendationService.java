@@ -24,16 +24,18 @@ public class RecomendationService {
 	
 	private WatchedHistoryService historyService;
 	
+	private UserPreferenceService preferenceService;
+	
 	public RecomendationService(MovieService movieService,InterestScoringService interestScoringService,
-			WatchedHistoryService historyService) {
+			WatchedHistoryService historyService,UserPreferenceService preferenceService) {
 		this.interestScoringService = interestScoringService;
 		this.movieService = movieService;
 		this.historyService = historyService;
+		this.preferenceService = preferenceService;
 	}
 	
 	public List<MovieResponseDTO> createRecomendation(User user){
-		List<UserPreference> userPreferences;
-		userPreferences = interestScoringService.calculateInterest( user, new ArrayList<>() );
+		List<UserPreference> userPreferences = preferenceService.getByUserId( user.getId() );
 		Map<Type, Double> weights = userPreferences.stream()
 				.collect( Collectors.toMap( UserPreference::getType, UserPreference::getWeight ) );
 		List<Long> ids = historyService.getIdsWatchedMovies(user.getId());

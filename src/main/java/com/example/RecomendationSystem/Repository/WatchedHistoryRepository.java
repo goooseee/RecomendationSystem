@@ -13,15 +13,15 @@ import com.example.RecomendationSystem.Entity.WatchedHistory;
 import com.example.RecomendationSystem.Entity.Enum.CountStatus;
 @Repository
 public interface WatchedHistoryRepository extends JpaRepository<WatchedHistory, Long>{
-	@Query("Select w from WatchedHistory w Join Fetch w.movie where w.user.id =: userId")
-	public List<WatchedHistory> getByUserId(@Param("userId") long userid);
+	@Query("Select w from WatchedHistory w Join Fetch w.movie where w.user.id = :userId")
+	public List<WatchedHistory> getByUserId(@Param("userId") long userId);
 	@Modifying 
 	@Query("DELETE FROM WatchedHistory w WHERE w.user.id = :userId")
-	public void deleteAllByUserId(@Param("userId") long userid);
+	public void deleteAllByUserId(@Param("userId") long userId);
 	
-	public void deleteWatchedHistoryByUserIdAndMovieId(long userid, long movieId);
-	@Query("Select w from WatchedHistory w Join Fetch w.movie where w.user.id =: userId AND w.status =: status")
-	public List<WatchedHistory> getByUserIdAndStatus(@Param("userId") long userid,@Param("status") CountStatus status);
+	public void deleteWatchedHistoryByUserIdAndMovieId(long userId, long movieId);
+	@Query("Select w from WatchedHistory w Join Fetch w.movie where w.user.id =:userId AND w.status = :status")
+	public List<WatchedHistory> getByUserIdAndStatus(@Param("userId") long userId,@Param("status") CountStatus status);
 	
 	
 }

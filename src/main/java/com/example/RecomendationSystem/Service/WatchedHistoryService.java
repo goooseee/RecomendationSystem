@@ -11,20 +11,29 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.RecomendationSystem.DTO.CreateHistoryResponseDTO;
 import com.example.RecomendationSystem.Entity.Movie;
 import com.example.RecomendationSystem.Entity.User;
+import com.example.RecomendationSystem.Entity.UserPreference;
 import com.example.RecomendationSystem.Entity.WatchedHistory;
 import com.example.RecomendationSystem.Entity.Enum.CountStatus;
 import com.example.RecomendationSystem.Entity.Enum.Reaction;
+import com.example.RecomendationSystem.Repository.MovieRepository;
 import com.example.RecomendationSystem.Repository.WatchedHistoryRepository;
 @Service
 public class WatchedHistoryService {
 	
 	private WatchedHistoryRepository historyRepository;
 	
-	private MovieService movieService;
+	private MovieRepository movieRepository;
 	
-	public WatchedHistoryService (MovieService movieService,WatchedHistoryRepository historyRepository) {
-		this.movieService = movieService;
+	private UserPreferenceService preferenceService;
+	
+	private InterestScoringService interestScoringService;
+	
+	public WatchedHistoryService (MovieRepository movieRepository,WatchedHistoryRepository historyRepository,
+			UserPreferenceService preferenceService,InterestScoringService interestScoringService) {
+		this.movieRepository = movieRepository;
 		this.historyRepository = historyRepository;
+		this.preferenceService = preferenceService;
+		this.interestScoringService = interestScoringService;
 	}
 	
 	public List<WatchedHistory> getHistory(long userId) {
@@ -36,16 +45,19 @@ public class WatchedHistoryService {
 	public List<Long> getIdsWatchedMovies(long userId){
 		return getHistory( userId).stream().map(h -> h.getMovie().getId()).toList();
 	}
-	public WatchedHistory addHistory(User user, CreateHistoryResponseDTO responseDTO) {
-		Movie movie = movieService.getById( responseDTO.getMovieId() );
+	@Transactional
+	public void addHistory(User user, CreateHistoryResponseDTO responseDTO) {
+		Movie movie = movieRepository.getMovieById( responseDTO.getMovieId() ).orElse( null );
 		WatchedHistory history = new WatchedHistory();
 		history.setDurationSeconds( responseDTO.getSecondsWatched() );
 		history.setMovie( movie );
 		history.setReact( responseDTO.getReact() );
 		history.setTimesWatched( 1 );
 		history.setUser( user );
-		history.setWhenWatched( LocalDate.now() );
-		return historyRepository.save( history );
+		history.setWhenWatched(LocalDate.now());
+		historyRepository.save( history );
+		List<UserPreference> userPreferences = preferenceService.getByUserId( user.getId() );
+		preferenceService.saveUserPreference( interestScoringService.calculateInterest( user, userPreferences, getHistory( user.getId() ) ) );
 	}
 	@Transactional
 	public List<WatchedHistory> deleteAll(){

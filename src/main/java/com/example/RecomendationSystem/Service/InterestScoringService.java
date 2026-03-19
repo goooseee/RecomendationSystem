@@ -22,14 +22,10 @@ import com.example.RecomendationSystem.Entity.Enum.Type;
 @Service
 public class InterestScoringService {
 	
-	private WatchedHistoryService historyService;
-	
 	private Map<Reaction, Double> react;
 	private Map<RecentyType, Double> dates;
 	
-	public InterestScoringService(WatchedHistoryService historyService) {
-		this.historyService = historyService;
-		
+	public InterestScoringService() {
 		react = new EnumMap<>( Reaction.class );
 		react.put(Reaction.didntreact, 0.0);
 		react.put(Reaction.disliked, -0.1);
@@ -41,14 +37,13 @@ public class InterestScoringService {
 		dates.put(RecentyType.morethanmonths, 0.1);
 	}
 	
-	public List<UserPreference> calculateInterest(User user, List<UserPreference> preferences) {
+	public List<UserPreference> calculateInterest(User user, List<UserPreference> preferences,
+			List<WatchedHistory> history) {
 		
 		Map<Type, UserPreference> mapType = new HashMap<>();
 		for(UserPreference preference : preferences) {
 			mapType.put( preference.getType(), preference );
 		}
-		
-		List<WatchedHistory> history = historyService.getHistory(user.getId());
 		for(WatchedHistory watchedHistory : history) {
 			if(watchedHistory.getStatus()!=CountStatus.Count) {
 			double weight = calculationContribution( watchedHistory );

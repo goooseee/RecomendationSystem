@@ -33,11 +33,11 @@ public class MovieController {
 		this.userService = userService;
 	}
 	@PostMapping("/addMovie")
-	public void addMovie(@RequestBody List<CreateMovieDTO> createMovieDTO) {
-		for(CreateMovieDTO c : createMovieDTO) {
-		System.out.println( c.getTitle() + " " + c.getTypes() );
-		movieService.saveMovie( c );
-		}
+	public void addMovie(@RequestBody CreateMovieDTO createMovieDTO) {
+		//for(CreateMovieDTO c : createMovieDTO) {
+		System.out.println( createMovieDTO.getTitle() + " " + createMovieDTO.getTypes() );
+		movieService.saveMovie( createMovieDTO );
+		//}
 	}
 	@GetMapping("/getList")
 	public List<MovieResponseDTO> showMovieList(){

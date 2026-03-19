@@ -16,4 +16,5 @@ public class CreateMovieDTO {
 	
 	private long duration;
 	
+	private long rating;
 }

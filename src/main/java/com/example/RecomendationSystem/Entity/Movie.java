@@ -46,9 +46,10 @@ public class Movie {
 	
 	private double rating;
 	
-	public Movie(String title, List<Type> type, long durationOfMovieSeconds) {
+	public Movie(String title, List<Type> type, long durationOfMovieSeconds,double rating) {
 		this.title = title;
 		this.type = type;
 		this.durationOfMovieSeconds = durationOfMovieSeconds;
+		this.rating = rating;
 	}
 }

@@ -15,7 +15,7 @@ public interface MovieRepository extends JpaRepository<Movie, Long>{
 	
 	Optional<Movie> getMovieByTitle(String title);
 	
-	public List<Movie> findTop100ByIdNotInOrderByRatingDesc(List<Long> ids);
+	public List<Movie> findTop100ByIdNotInOrderByRatingDesc(List<Long> id);
 	
-	public List<Movie> findTop100OrderByRatingDesc();
+	public List<Movie> findTop100ByOrderByRatingDesc();
 }
