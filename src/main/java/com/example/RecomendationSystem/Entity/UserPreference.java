@@ -5,6 +5,7 @@ import java.util.Date;
 
 import com.example.RecomendationSystem.Entity.Enum.Type;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -29,6 +30,7 @@ public class UserPreference {
 	@JoinColumn(name = "user_id")
 	@ManyToOne(fetch = FetchType.LAZY)
 	private User user;
+	@Column(name = "types")
 	@Enumerated(EnumType.STRING)
 	private Type type;
 	

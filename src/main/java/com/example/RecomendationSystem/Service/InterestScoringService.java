@@ -19,7 +19,10 @@ import com.example.RecomendationSystem.Entity.Enum.CountStatus;
 import com.example.RecomendationSystem.Entity.Enum.Reaction;
 import com.example.RecomendationSystem.Entity.Enum.RecentyType;
 import com.example.RecomendationSystem.Entity.Enum.Type;
+
+import lombok.extern.slf4j.Slf4j;
 @Service
+@Slf4j
 public class InterestScoringService {
 	
 	private Map<Reaction, Double> react;
@@ -39,8 +42,10 @@ public class InterestScoringService {
 	
 	public List<UserPreference> calculateInterest(User user, List<UserPreference> preferences,
 			List<WatchedHistory> history) {
-		
+		long startTime = System.currentTimeMillis();
+		log.atDebug().log( "Start calc interest for user = {}", user.getUsername() );
 		Map<Type, UserPreference> mapType = new HashMap<>();
+		int proceed = 0;
 		for(UserPreference preference : preferences) {
 			mapType.put( preference.getType(), preference );
 		}
@@ -56,6 +61,7 @@ public class InterestScoringService {
 					double nweight = userPreference.getWeight()+weight;
 					userPreference.setWeight( nweight );
 					userPreference.setLastUpdate( LocalDate.now() );
+					log.atTrace().log( "Scoring weight = {} for genres = {}",nweight,type);
 				}else {
 					userPreference = new UserPreference();
 					userPreference.setType( type );
@@ -64,30 +70,15 @@ public class InterestScoringService {
 					userPreference.setLastUpdate( LocalDate.now() );
 					mapType.put( type, userPreference );
 					preferences.add( userPreference );
+					log.atTrace().log( "Scoring weight = {} for new genres = {}",weight,type);
 				}
-//				for(UserPreference userPreference : preferences) {
-//					if(userPreference.getType().equals( type )) {
-//						preference = userPreference;
-//						break;
-//					}
-//				}
-//				if(preference!=null) {
-//					double decay = 0.9;
-//					double newWeight = preference.getWeight() * decay + weight;
-//					preference.setLastUpdate( LocalDate.now() );
-//					preference.setWeight( newWeight );
-//				}else {
-//					preference = new UserPreference();
-//					preference.setType( type );
-//					preference.setUser( user );
-//					preference.setWeight( weight );
-//					preference.setLastUpdate( LocalDate.now() );
-//					preferences.add( preference );
-//				}
 			}
 			watchedHistory.setStatus( CountStatus.Count );
+			proceed++;
 			}
 		}
+		log.atDebug().log( "End calc interst proceed new movie {} total preference for user = {} in ms = {}",
+				 proceed, preferences.size(), user.getUsername(), System.currentTimeMillis()-startTime );
 		return preferences;
 	}
 	private double calculationContribution(WatchedHistory history) {

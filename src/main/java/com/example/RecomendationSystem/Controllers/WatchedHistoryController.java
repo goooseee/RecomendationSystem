@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.RecomendationSystem.DTO.CreateHistoryResponseDTO;
+import com.example.RecomendationSystem.DTO.CreateHistoryRequestDTO;
 import com.example.RecomendationSystem.Entity.Movie;
 import com.example.RecomendationSystem.Entity.User;
 import com.example.RecomendationSystem.Entity.WatchedHistory;
@@ -33,9 +33,9 @@ public class WatchedHistoryController {
 		this.userService = userService;
 	}
 	@PostMapping("/addHistory")
-	public void addHistory(@RequestBody List<CreateHistoryResponseDTO> createHistoryResponseDTO) {
+	public void addHistory(@RequestBody List<CreateHistoryRequestDTO> createHistoryRequestDTO) {
 		User user = userService.getUserById( 1 );
-		for(CreateHistoryResponseDTO c : createHistoryResponseDTO) {
+		for(CreateHistoryRequestDTO c : createHistoryRequestDTO) {
 		watchedHistoryService.addHistory( user, c );
 		}
 	}

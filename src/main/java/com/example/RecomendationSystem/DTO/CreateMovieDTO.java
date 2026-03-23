@@ -6,8 +6,10 @@ import com.example.RecomendationSystem.Entity.Enum.Type;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 @Setter
 @Getter
+@ToString
 public class CreateMovieDTO {
 	
 	private String title;

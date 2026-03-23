@@ -16,11 +16,11 @@ public class UserController {
 		this.userService = userService;
 	}
 	
-//	@PostMapping("/addUser")
-//	public void addUser() {
-//		User user = new User();
-//		user.setUsername( "ass" );
-//		userService.addUser( user );
-//	}
+	@PostMapping("/addUser")
+	public void addUser() {
+		User user = new User();
+		user.setUsername( "ass" );
+		userService.addUser( user );
+	}
 	
 }

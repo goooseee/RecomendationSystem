@@ -4,9 +4,11 @@ import com.example.RecomendationSystem.Entity.Enum.Reaction;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 @Setter
 @Getter
-public class CreateHistoryResponseDTO {
+@ToString
+public class CreateHistoryRequestDTO {
 	
 	private long movieId;
 	
