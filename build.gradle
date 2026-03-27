@@ -35,6 +35,8 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	implementation 'org.liquibase:liquibase-core'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'tools.jackson.datatype:jackson-datatype-jsr310:3.0.0-rc2'
 }
 
 tasks.named('test') {
