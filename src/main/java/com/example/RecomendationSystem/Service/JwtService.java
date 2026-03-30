@@ -6,6 +6,7 @@ import java.util.function.Function;
 
 import javax.crypto.SecretKey;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -21,11 +22,11 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtService {
-	
+	@Value("${security.jwt.secret_key}")
 	private String secretKey;
-	
+	@Value("${security.jwt.access_token_expiration}")
 	private long accessTokenExpration;
-	
+	@Value("${security.jwt.refresh_token_expiration}")
 	private long refreshTokenExpration;
 	
 	private LocalDate dateCookie;
