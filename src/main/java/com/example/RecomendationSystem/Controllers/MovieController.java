@@ -17,6 +17,7 @@ import com.example.RecomendationSystem.Entity.User;
 import com.example.RecomendationSystem.Service.MovieService;
 import com.example.RecomendationSystem.Service.RecomendationService;
 import com.example.RecomendationSystem.Service.UserService;
+import com.example.RecomendationSystem.Service.UserServiceImpl;
 @RestController
 public class MovieController {
 	
@@ -24,10 +25,10 @@ public class MovieController {
 	
 	private MovieService movieService;
 	
-	private UserService userService;
+	private UserServiceImpl userService;
 	@Autowired
 	public MovieController(RecomendationService recomendationService,MovieService movieService,
-			UserService userService) {
+			UserServiceImpl userService) {
 		this.movieService = movieService;
 		this.recomendationService = recomendationService;
 		this.userService = userService;

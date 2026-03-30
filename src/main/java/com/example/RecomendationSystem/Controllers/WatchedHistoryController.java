@@ -16,6 +16,7 @@ import com.example.RecomendationSystem.Entity.WatchedHistory;
 import com.example.RecomendationSystem.Entity.Enum.Reaction;
 import com.example.RecomendationSystem.Service.MovieService;
 import com.example.RecomendationSystem.Service.UserService;
+import com.example.RecomendationSystem.Service.UserServiceImpl;
 import com.example.RecomendationSystem.Service.WatchedHistoryService;
 @RestController
 public class WatchedHistoryController {
@@ -24,10 +25,10 @@ public class WatchedHistoryController {
 	
 	private MovieService movieService;
 	
-	private UserService userService;
+	private UserServiceImpl userService;
 	@Autowired
 	public WatchedHistoryController(WatchedHistoryService watchedHistoryService,MovieService movieService,
-			UserService userService) {
+			UserServiceImpl userService) {
 		this.watchedHistoryService = watchedHistoryService;
 		this.movieService = movieService;
 		this.userService = userService;

@@ -18,7 +18,7 @@ import com.example.RecomendationSystem.Entity.Movie;
 import com.example.RecomendationSystem.Entity.User;
 import com.example.RecomendationSystem.Entity.UserPreference;
 import com.example.RecomendationSystem.Entity.Enum.Type;
-import com.example.RecomendationSystem.RankingEngine.GenereteCandidate;
+import com.example.RecomendationSystem.RankingEngine.GenerateCandidate;
 import com.example.RecomendationSystem.RankingEngine.RankingEngine;
 
 import lombok.RequiredArgsConstructor;
@@ -36,7 +36,7 @@ public class RecomendationService {
 	
 	private final UserPreferenceService preferenceService;
 	
-	private final GenereteCandidate genereteCandidate;
+	private final GenerateCandidate genereteCandidate;
 	
     private final RankingEngine rankingEngine;
 	

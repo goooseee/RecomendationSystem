@@ -6,14 +6,14 @@ import org.springframework.stereotype.Service;
 
 import com.example.RecomendationSystem.Entity.Movie;
 import com.example.RecomendationSystem.Entity.User;
-import com.example.RecomendationSystem.RankingEngine.GenereteCandidate;
+import com.example.RecomendationSystem.RankingEngine.GenerateCandidate;
 import com.example.RecomendationSystem.Repository.MovieRepository;
 
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service
-public class GenereteCandidateImpl implements GenereteCandidate{
+public class GenerateCandidateImpl implements GenerateCandidate{
 	
 	private final MovieRepository movieRepository; 
 	

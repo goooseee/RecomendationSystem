@@ -6,13 +6,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.RecomendationSystem.Entity.User;
 import com.example.RecomendationSystem.Service.UserService;
+import com.example.RecomendationSystem.Service.UserServiceImpl;
 
 @RestController
 public class UserController {
 	
-	private UserService userService;
+	private UserServiceImpl userService;
 	
-	public UserController(UserService userService) {
+	public UserController(UserServiceImpl userService) {
 		this.userService = userService;
 	}
 	

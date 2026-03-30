@@ -1,6 +1,11 @@
 package com.example.RecomendationSystem.Entity;
 
+import java.util.Collection;
 import java.util.List;
+
+import org.jspecify.annotations.Nullable;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -19,7 +24,7 @@ import lombok.ToString;
 @ToString
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements UserDetails{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -30,5 +35,17 @@ public class User {
 	
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<UserPreference> preferences;
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public @Nullable String getPassword() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }

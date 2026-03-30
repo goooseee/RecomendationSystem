@@ -6,7 +6,7 @@ import com.example.RecomendationSystem.Entity.Movie;
 import com.example.RecomendationSystem.Entity.User;
 import com.example.RecomendationSystem.Repository.MovieRepository;
 
-public interface GenereteCandidate {
+public interface GenerateCandidate {
 	
 	public List<Movie> getCandidate(User user);
 	

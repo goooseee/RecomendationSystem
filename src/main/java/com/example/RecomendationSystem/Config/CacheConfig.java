@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import lombok.extern.slf4j.Slf4j;
 @Configuration
 @Slf4j
-public class CashingConfig implements CachingConfigurer{
+public class CacheConfig implements CachingConfigurer{
 	
 	@Override
 	public CacheErrorHandler errorHandler() {
