@@ -11,19 +11,15 @@ import com.example.RecomendationSystem.Entity.User;
 import com.example.RecomendationSystem.Repository.MovieRepository;
 import com.example.RecomendationSystem.Repository.WatchedHistoryRepository;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class MovieService {
 	
-	private MovieRepository movieRepository;
+	private final MovieRepository movieRepository;
 	
-	private WatchedHistoryService historyService;
-	
-	public MovieService(MovieRepository movieRepository,WatchedHistoryService historyService) {
-		this.movieRepository = movieRepository;
-		this.historyService = historyService;
-	}
 	
 	public Movie getById(long id) {
 		log.atDebug().log( "Getting movie with id = {}",id );

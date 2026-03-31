@@ -16,8 +16,10 @@ import org.springframework.data.redis.serializer.JacksonJsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.scheduling.annotation.Async;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import tools.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import tools.jackson.databind.jsontype.PolymorphicTypeValidator;
@@ -26,7 +28,7 @@ import tools.jackson.datatype.jsr310.JavaTimeModule;
 @Configuration
 @EnableCaching
 public class RedisConfiguration {
-
+	
     @Bean
     public CacheManager cacheManager(RedisConnectionFactory connectionFactory) {
     	
@@ -49,5 +51,28 @@ public class RedisConfiguration {
         return RedisCacheManager.builder(connectionFactory)
                 .cacheDefaults(cacheConfiguration)
                 .build();
+    }
+    
+    @Bean
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
+        template.setConnectionFactory(connectionFactory);
+        PolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder()
+                .allowIfBaseType(Object.class).build();
+
+        GenericJacksonJsonRedisSerializer serializer = GenericJacksonJsonRedisSerializer.create(builder->{
+        	builder.enableDefaultTyping( ptv );
+        	builder.customize( mapperBuilder -> {
+        		mapperBuilder.addModule( new JavaTimeModule() );
+        	} );
+        } );
+
+        template.setKeySerializer(RedisSerializer.string());
+        template.setHashKeySerializer(RedisSerializer.string());
+        template.setValueSerializer(serializer);
+        template.setHashValueSerializer(serializer);
+
+        template.afterPropertiesSet();
+        return template;
     }
 }

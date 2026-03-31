@@ -18,26 +18,22 @@ import com.example.RecomendationSystem.Entity.Enum.Reaction;
 import com.example.RecomendationSystem.Repository.MovieRepository;
 import com.example.RecomendationSystem.Repository.WatchedHistoryRepository;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class WatchedHistoryService {
 	
-	private WatchedHistoryRepository historyRepository;
+	private final WatchedHistoryRepository historyRepository;
 	
-	private MovieRepository movieRepository;
+	private final MovieRepository movieRepository;
 	
-	private UserPreferenceService preferenceService;
+	private final UserPreferenceService preferenceService;
 	
-	private InterestScoringService interestScoringService;
+	private final InterestScoringService interestScoringService;
 	
-	public WatchedHistoryService (MovieRepository movieRepository,WatchedHistoryRepository historyRepository,
-			UserPreferenceService preferenceService,InterestScoringService interestScoringService) {
-		this.movieRepository = movieRepository;
-		this.historyRepository = historyRepository;
-		this.preferenceService = preferenceService;
-		this.interestScoringService = interestScoringService;
-	}
+	private final RedisService redisService;
 	
 	public List<WatchedHistory> getHistory(long userId) {
 		log.atDebug().log( "Getting all history user with id = {}",userId );
@@ -67,6 +63,7 @@ public class WatchedHistoryService {
 		List<UserPreference> userPreferences = preferenceService.getByUserId( user.getId() );
 		preferenceService.saveUserPreference( interestScoringService.calculateInterest( user, userPreferences, getHistory( user.getId() ) ) );
 		log.atDebug().log("Preference user = {} was update", user.getUsername());
+		redisService.deleteDataRedis( user.getId() );
 	}
 	@Transactional
 	public List<WatchedHistory> deleteAll(){

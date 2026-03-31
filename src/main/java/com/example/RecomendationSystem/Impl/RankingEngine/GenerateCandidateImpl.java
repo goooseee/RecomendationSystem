@@ -10,15 +10,18 @@ import com.example.RecomendationSystem.RankingEngine.GenerateCandidate;
 import com.example.RecomendationSystem.Repository.MovieRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class GenerateCandidateImpl implements GenerateCandidate{
 	
 	private final MovieRepository movieRepository; 
 	
 	@Override
 	public List<Movie> getCandidate(User user) {
+		log.atInfo().log("[GenerateCandidate] Getting candidate for {}", user.getUsername());
 		return movieRepository.getTopCandidte(user.getId());
 	}
 

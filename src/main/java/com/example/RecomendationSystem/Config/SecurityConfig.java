@@ -39,7 +39,7 @@ public class SecurityConfig {
 		return http
 				.authorizeHttpRequests( n -> 
 						n.requestMatchers("/login","/registration/**", "/css/**", "/refresh_token", "/")
-		    			.permitAll().anyRequest().authenticated() )
+		    			.permitAll().anyRequest().permitAll() )
 				.userDetailsService( userService )
 				.exceptionHandling( e -> {
 					e.accessDeniedHandler( accessDeniedHandler );
