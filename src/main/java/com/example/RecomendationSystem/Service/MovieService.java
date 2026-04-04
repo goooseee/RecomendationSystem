@@ -33,8 +33,8 @@ public class MovieService {
 	
 	public Movie saveMovie(CreateMovieDTO createMovieDTO) {
 		log.atInfo().log( "Trying to save movie with request = {}",createMovieDTO.toString() );
-		Movie movie = new Movie(createMovieDTO.getTitle(),createMovieDTO.getTypes(),
-				 createMovieDTO.getDuration(), createMovieDTO.getRating());
+		Movie movie = new Movie(createMovieDTO.getTitle(),createMovieDTO.getDuration(),
+				 createMovieDTO.getTypes(), createMovieDTO.getRating());
 		log.atInfo().log("Saving movie = {}", movie.toString());
 		return movieRepository.save( movie );
 	}

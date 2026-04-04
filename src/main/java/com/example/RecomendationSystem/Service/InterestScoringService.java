@@ -3,14 +3,18 @@ package com.example.RecomendationSystem.Service;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.example.RecomendationSystem.DTO.ScoringWeightsProperties;
 import com.example.RecomendationSystem.Entity.Movie;
 import com.example.RecomendationSystem.Entity.User;
 import com.example.RecomendationSystem.Entity.UserPreference;
@@ -25,53 +29,40 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class InterestScoringService {
 	
-	private Map<Reaction, Double> react;
-	private Map<RecentyType, Double> dates;
+	private final ScoringWeightsProperties properties;
 	
-	public InterestScoringService() {
-		react = new EnumMap<>( Reaction.class );
-		react.put(Reaction.didntreact, 0.0);
-		react.put(Reaction.disliked, -0.1);
-		react.put(Reaction.liked, 0.2);
-		
-		dates = new EnumMap<>(RecentyType.class);
-		dates.put(RecentyType.week, 0.6);
-		dates.put(RecentyType.month, 0.3);
-		dates.put(RecentyType.morethanmonths, 0.1);
+	public InterestScoringService(ScoringWeightsProperties properties) {
+		this.properties = properties;
 	}
 	
+	
+	//TODO
+	//значит, веса лучше вытащить в файлы конфигурации,
+	//сделать еще один метод что будет создавать объект 
+	//computeIfAbsent использовать его для изменения мапы
+	//продолжаем расчитывать и и после перерасчета возвращаем измененный список и высший класс уже сам отправляет в бд новый список
+	//насчет изменения статуса в более высоком классе должен быть как раз список кандидатов и сначала передается в расчет и затем отправляется в изменения статуса и 
+	//еще этот метод в высшем классе должен быть аннотирован transactional
 	public List<UserPreference> calculateInterest(User user, List<UserPreference> preferences,
 			List<WatchedHistory> history) {
 		long startTime = System.currentTimeMillis();
 		log.atDebug().log( "Start calc interest for user = {}", user.getUsername() );
-		Map<Type, UserPreference> mapType = new HashMap<>();
+		Map<Type, UserPreference> mapType = preferences.stream()
+				.collect( Collectors.toMap( UserPreference::getType, p->p ) );
 		int proceed = 0;
-		for(UserPreference preference : preferences) {
-			mapType.put( preference.getType(), preference );
-		}
+		
 		for(WatchedHistory watchedHistory : history) {
+			
 			if(watchedHistory.getStatus()!=CountStatus.Count) {
 			double weight = calculationContribution( watchedHistory );
 			List<Type> types = watchedHistory.getMovie().getType();
 			for(Type type : types) {
 				
-				UserPreference userPreference = mapType.get( type );
+				UserPreference userPreference = mapType.computeIfAbsent( type, 
+						t -> create( type, user, 0.0 ));
 				
-				if(userPreference!=null) {
-					double nweight = userPreference.getWeight()+weight;
-					userPreference.setWeight( nweight );
-					userPreference.setLastUpdate( LocalDate.now() );
-					log.atTrace().log( "Scoring weight = {} for genres = {}",nweight,type);
-				}else {
-					userPreference = new UserPreference();
-					userPreference.setType( type );
-					userPreference.setUser( user );
-					userPreference.setWeight( weight );
-					userPreference.setLastUpdate( LocalDate.now() );
-					mapType.put( type, userPreference );
-					preferences.add( userPreference );
-					log.atTrace().log( "Scoring weight = {} for new genres = {}",weight,type);
-				}
+				updateUserPreference( userPreference, weight );
+				
 			}
 			watchedHistory.setStatus( CountStatus.Count );
 			proceed++;
@@ -79,8 +70,18 @@ public class InterestScoringService {
 		}
 		log.atDebug().log( "End calc interst proceed new movie {} total preference for user = {} in ms = {}",
 				 proceed, preferences.size(), user.getUsername(), System.currentTimeMillis()-startTime );
-		return preferences;
+		return new ArrayList<>(mapType.values());
 	}
+	
+	private UserPreference create(Type type, User user, double weight) {
+		return new UserPreference(type,user,weight,LocalDate.now());
+	}
+	
+	private void updateUserPreference (UserPreference preference, double weight) {
+		preference.setWeight( preference.getWeight() + weight );
+		preference.setLastUpdate( LocalDate.now() );
+	}
+	
 	private double calculationContribution(WatchedHistory history) {
 		double weight = getReact(history.getReact())+getDuration(history)+getDate(history.getWhenWatched());
 		double finalWeight = weight*getTimesWatched(history.getTimesWatched());
@@ -88,12 +89,12 @@ public class InterestScoringService {
 	}
 	
 	private double getReact(Reaction reaction) {
-		return react.get( reaction );
+		return properties.reaction().get( reaction );
 	}
 	
 	private double getDate(LocalDate date) {
 		LocalDate dateNow = LocalDate.now();
-		return dates.get( getRecent( date, dateNow ) );
+		return properties.recency().get( getRecent( date, dateNow ) );
 	}
 	
 	private RecentyType getRecent(LocalDate date1,LocalDate date2) {

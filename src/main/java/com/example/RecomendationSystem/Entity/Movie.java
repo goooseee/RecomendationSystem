@@ -48,10 +48,17 @@ public class Movie {
 	
 	private double rating;
 	
-	public Movie(String title, List<Type> type, long durationOfMovieSeconds,double rating) {
+	public Movie(String title, long durationOfMovieSeconds, List<Type> type,double rating) {
 		this.title = title;
 		this.type = type;
 		this.durationOfMovieSeconds = durationOfMovieSeconds;
+		this.rating = rating;
+	}
+	
+	public Movie(long id, String title, List<Type> type,double rating) {
+		this.title = title;
+		this.type = type;
+		this.id = id;
 		this.rating = rating;
 	}
 }

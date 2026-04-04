@@ -44,7 +44,7 @@ public class MovieController {
 	public List<MovieResponseDTO> showMovieList(){
 		User user = userService.getUserById( 1 );
 		System.out.println( user.toString() );
-		return recomendationService.createRecomendation( user );
+		return recomendationService.getRecommend( user );
 	}
 	@DeleteMapping("/deleteAllMovies")
 	public void deleteAll() {

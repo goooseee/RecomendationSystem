@@ -37,4 +37,17 @@ public class UserPreference {
 	private double weight;
 	
 	private LocalDate lastUpdate;
+	
+	public UserPreference(Type type,double weight) {
+		this.type = type;
+		this.weight = weight;
+	}
+	public UserPreference() {}
+	
+	public UserPreference(Type type,User user,double weight, LocalDate lastUpdate) {
+		this.type = type;
+		this.weight = weight;
+		this.user = user;
+		this.lastUpdate = lastUpdate;
+	}
 }
