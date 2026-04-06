@@ -6,22 +6,22 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.example.RecomendationSystem.Entity.User;
+import com.example.RecomendationSystem.Exception.UserNotFoundException;
 import com.example.RecomendationSystem.Repository.UserRepository;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService{
 	
-	private UserRepository userRepository;
-
-	public UserServiceImpl(UserRepository userRepository) {
-		this.userRepository = userRepository;
-	}
+	private final UserRepository userRepository;
 	
 	public User getUserById(long id) {
 		log.atTrace().log("Getting user with id = {}", id);
-		return userRepository.getUsersById( id ).orElse( null );
+		return userRepository.findById( id )
+				.orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
 	}
 	
 	public User addUser(User user) {
@@ -31,16 +31,12 @@ public class UserServiceImpl implements UserService{
 
 	@Override
 	public boolean existByUsername(String username) {
-		User user = userRepository.findByUsername( username ).orElse( null );
-		if(user != null) {
-			return true;
-		}
-		return false;
+		return userRepository.existByUsername( username );
 	}
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		return userRepository.findByUsername( username )
-				.orElseThrow(() -> new UsernameNotFoundException( "Пользователь не найден" ));
+				.orElseThrow(() -> new UserNotFoundException( "User not found with username: " + username ));
 	}
 }

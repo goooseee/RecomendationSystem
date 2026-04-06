@@ -14,13 +14,14 @@ import com.example.RecomendationSystem.Entity.WatchedHistory;
 @Repository
 public interface MovieRepository extends JpaRepository<Movie, Long>{
 	
-	Optional<Movie> getMovieById(long id);
-	
 	Optional<Movie> getMovieByTitle(String title);
+	
 	@EntityGraph(attributePaths = {"type"})
 	public List<Movie> findTop100ByIdNotInOrderByRatingDesc(List<Long> id);
+	
 	@EntityGraph(attributePaths = {"type"})
 	public List<Movie> findTop100ByOrderByRatingDesc();
+	
 	@Query("""
 			SELECT m from Movie m
 			where m.id not in (

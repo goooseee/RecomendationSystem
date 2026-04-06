@@ -24,17 +24,14 @@ import com.example.RecomendationSystem.Entity.Enum.Reaction;
 import com.example.RecomendationSystem.Entity.Enum.RecentyType;
 import com.example.RecomendationSystem.Entity.Enum.Type;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class InterestScoringService {
 	
 	private final ScoringWeightsProperties properties;
-	
-	public InterestScoringService(ScoringWeightsProperties properties) {
-		this.properties = properties;
-	}
-	
 	
 	//TODO
 	//значит, веса лучше вытащить в файлы конфигурации,
@@ -89,12 +86,12 @@ public class InterestScoringService {
 	}
 	
 	private double getReact(Reaction reaction) {
-		return properties.reaction().get( reaction );
+		return properties.reaction().getOrDefault( reaction, 0.0 );
 	}
 	
 	private double getDate(LocalDate date) {
 		LocalDate dateNow = LocalDate.now();
-		return properties.recency().get( getRecent( date, dateNow ) );
+		return properties.recency().getOrDefault( getRecent( date, dateNow ), 0.0 );
 	}
 	
 	private RecentyType getRecent(LocalDate date1,LocalDate date2) {

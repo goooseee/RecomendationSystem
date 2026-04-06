@@ -1,8 +1,6 @@
 package com.example.RecomendationSystem.Service;
 
-import java.time.Duration;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -11,11 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.RecomendationSystem.DTO.CreateHistoryRequestDTO;
 import com.example.RecomendationSystem.Entity.Movie;
 import com.example.RecomendationSystem.Entity.User;
-import com.example.RecomendationSystem.Entity.UserPreference;
 import com.example.RecomendationSystem.Entity.WatchedHistory;
 import com.example.RecomendationSystem.Entity.Enum.CountStatus;
-import com.example.RecomendationSystem.Entity.Enum.Reaction;
-import com.example.RecomendationSystem.Repository.MovieRepository;
 import com.example.RecomendationSystem.Repository.WatchedHistoryRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -26,14 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 public class WatchedHistoryService {
 	
 	private final WatchedHistoryRepository historyRepository;
-	
-	private final MovieRepository movieRepository;
-	
-	private final UserPreferenceService preferenceService;
-	
-	private final InterestScoringService interestScoringService;
-	
-	private final RedisService redisService;
 	
 	public List<WatchedHistory> getHistory(long userId) {
 		log.atDebug().log( "Getting all history user with id = {}",userId );
@@ -47,10 +34,9 @@ public class WatchedHistoryService {
 		log.atDebug().log( "Getting ids of movies that user watched with id = {}",userId );
 		return getHistory( userId).stream().map(h -> h.getMovie().getId()).toList();
 	}
-	@Transactional
-	public void addHistory(User user, CreateHistoryRequestDTO requestDTO) {
-		log.atDebug().log( "Create history with response = {} for user = {}",requestDTO.toString(),user.getUsername() );
-		Movie movie = movieRepository.getMovieById( requestDTO.getMovieId() ).orElse( null );
+	
+	public void addHistory(User user, CreateHistoryRequestDTO requestDTO, Movie movie) {
+		
 		WatchedHistory history = new WatchedHistory();
 		history.setDurationSeconds( requestDTO.getSecondsWatched() );
 		history.setMovie( movie );
@@ -60,10 +46,6 @@ public class WatchedHistoryService {
 		history.setWhenWatched(LocalDate.now());
 		historyRepository.save( history );
 		log.atDebug().log( "Saving history" );
-		List<UserPreference> userPreferences = preferenceService.getByUserId( user.getId() );
-		preferenceService.saveUserPreference( interestScoringService.calculateInterest( user, userPreferences, getHistory( user.getId() ) ) );
-		log.atDebug().log("Preference user = {} was update", user.getUsername());
-		redisService.deleteDataRedis( user.getId() );
 	}
 	@Transactional
 	public List<WatchedHistory> deleteAll(){

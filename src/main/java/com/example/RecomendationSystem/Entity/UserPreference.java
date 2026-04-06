@@ -17,12 +17,16 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 @Setter
 @Getter
+@Builder
 @Entity
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id","type"})})
+@AllArgsConstructor
 public class UserPreference {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
