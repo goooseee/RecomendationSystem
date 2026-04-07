@@ -66,7 +66,7 @@ public class InterestScoringService {
 			}
 		}
 		log.atDebug().log( "End calc interst proceed new movie {} total preference for user = {} in ms = {}",
-				 proceed, preferences.size(), user.getUsername(), System.currentTimeMillis()-startTime );
+				 proceed, mapType.size(), user.getUsername(), System.currentTimeMillis()-startTime );
 		return new ArrayList<>(mapType.values());
 	}
 	

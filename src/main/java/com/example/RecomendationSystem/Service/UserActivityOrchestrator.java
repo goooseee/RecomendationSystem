@@ -27,10 +27,11 @@ public class UserActivityOrchestrator {
 	private final MovieService movieService;
 	
 	private final WatchedHistoryService watchedHistoryService;
+	
+	private final UserService userService;
 	@Transactional
 	public void whenWatchedMovie(CreateHistoryRequestDTO requestDTO) {
-		//позже добавлю в userservice метод что будет доставать из контекста пользователя
-		User user = new User();
+		User user = userService.getUserFromContext();
 		
 		Movie movie = movieService.getById( requestDTO.getMovieId() );
 		
@@ -38,7 +39,7 @@ public class UserActivityOrchestrator {
 		
 		List<UserPreference> userPreferences = preferenceService.getByUserId( user.getId() );
 		
-		preferenceService.saveUserPreference( interestScoringService.calculateInterest( user, userPreferences, watchedHistoryService.getHistory( user.getId() ) ) );
+		preferenceService.saveUserPreference( interestScoringService.calculateInterest( user, userPreferences, watchedHistoryService.getHistoryForScorting( user.getId() ) ) );
 		
 		log.atDebug().log("Preference user = {} was update", user.getUsername());
 		

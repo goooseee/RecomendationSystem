@@ -20,7 +20,6 @@ public class RedisService {
 	
     private static final String RECS_KEY_PREFIX = "movie_recs::";
 	
-	@Async
 	public void deleteDataRedis(Long userId) {
 		String cacheKey = RECS_KEY_PREFIX + userId;
 		try {
@@ -31,7 +30,7 @@ public class RedisService {
 			log.atError().log("[RecomendationService] failed to delete data: {}", e.getMessage());
 		}
 	}
-	@Async
+
 	public void addDataToRedis(Long userId, List<MovieResponseDTO> result) {
 		String cacheKey = RECS_KEY_PREFIX + userId;
 		try {

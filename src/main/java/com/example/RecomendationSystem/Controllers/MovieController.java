@@ -18,32 +18,25 @@ import com.example.RecomendationSystem.Service.MovieService;
 import com.example.RecomendationSystem.Service.RecomendationService;
 import com.example.RecomendationSystem.Service.UserService;
 import com.example.RecomendationSystem.Service.UserServiceImpl;
+
+import lombok.RequiredArgsConstructor;
 @RestController
+@RequiredArgsConstructor
 public class MovieController {
 	
-	private RecomendationService recomendationService;
+	private final RecomendationService recomendationService;
 	
-	private MovieService movieService;
+	private final MovieService movieService;
 	
-	private UserServiceImpl userService;
-	@Autowired
-	public MovieController(RecomendationService recomendationService,MovieService movieService,
-			UserServiceImpl userService) {
-		this.movieService = movieService;
-		this.recomendationService = recomendationService;
-		this.userService = userService;
-	}
+	private final UserService userService;
+	
 	@PostMapping("/addMovie")
 	public void addMovie(@RequestBody CreateMovieDTO createMovieDTO) {
-		//for(CreateMovieDTO c : createMovieDTO) {
-		System.out.println( createMovieDTO.getTitle() + " " + createMovieDTO.getTypes() );
 		movieService.saveMovie( createMovieDTO );
-		//}
 	}
 	@GetMapping("/getList")
 	public List<MovieResponseDTO> showMovieList(){
-		User user = userService.getUserById( 1 );
-		System.out.println( user.toString() );
+		User user = userService.getUserFromContext();
 		return recomendationService.getRecommend( user );
 	}
 	@DeleteMapping("/deleteAllMovies")

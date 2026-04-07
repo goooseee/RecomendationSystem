@@ -28,35 +28,37 @@ public class WatchedHistoryService {
 	}
 	public List<WatchedHistory> getHistoryForScorting(long userId) {
 		log.atDebug().log( "Getting history user with id = {} for scoring",userId );
-		return historyRepository.getByUserIdAndStatus( userId, CountStatus.NotCount );
+		return historyRepository.getByUserIdAndStatus( userId, List.of(CountStatus.NotCount) );
 	}
 	public List<Long> getIdsWatchedMovies(long userId){
 		log.atDebug().log( "Getting ids of movies that user watched with id = {}",userId );
-		return getHistory( userId).stream().map(h -> h.getMovie().getId()).toList();
+		return historyRepository.getByUserIdAndStatus( userId, List.of(CountStatus.NotCount, CountStatus.Count) )
+				.stream().map(h -> h.getMovie().getId()).toList();
 	}
 	
 	public void addHistory(User user, CreateHistoryRequestDTO requestDTO, Movie movie) {
 		
-		WatchedHistory history = new WatchedHistory();
-		history.setDurationSeconds( requestDTO.getSecondsWatched() );
-		history.setMovie( movie );
-		history.setReact( requestDTO.getReact() );
-		history.setTimesWatched( 1 );
-		history.setUser( user );
-		history.setWhenWatched(LocalDate.now());
+		WatchedHistory history = WatchedHistory.builder()
+				.durationSeconds(requestDTO.getSecondsWatched())
+				.movie( movie )
+				.react( requestDTO.getReact() )
+				.status( CountStatus.NotCount )
+				.user( user )
+				.timesWatched( 1 )
+				.whenWatched( LocalDate.now() )
+				.build();
+				
 		historyRepository.save( history );
 		log.atDebug().log( "Saving history" );
 	}
 	@Transactional
-	public List<WatchedHistory> deleteAll(){
-		long userId = 1;
+	public List<WatchedHistory> deleteAll(long userId){
 		log.atDebug().log("Deleting all history for user = {}",userId);
 		historyRepository.deleteAllByUserId( userId );
 		return historyRepository.getByUserId(userId);
 	}
-	
-	public List<WatchedHistory> deleteById(long movieId){
-		long userId = 1;
+	@Transactional
+	public List<WatchedHistory> deleteById(long movieId, long userId){
 		log.atDebug().log("Deleting history = {} for user = {}",movieId,userId);
 		historyRepository.deleteWatchedHistoryByUserIdAndMovieId( userId,movieId );
 		return historyRepository.getByUserId(userId);

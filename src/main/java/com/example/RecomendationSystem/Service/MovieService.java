@@ -21,7 +21,6 @@ public class MovieService {
 	
 	private final MovieRepository movieRepository;
 	
-	
 	public Movie getById(long id) {
 		log.atDebug().log( "Getting movie with id = {}",id );
 		return movieRepository.findById( id )
@@ -36,11 +35,17 @@ public class MovieService {
 	
 	public Movie saveMovie(CreateMovieDTO createMovieDTO) {
 		log.atInfo().log( "Trying to save movie with request = {}",createMovieDTO.toString() );
-		Movie movie = new Movie(
-				 createMovieDTO.getTitle(),
-				 createMovieDTO.getDuration(),
-				 createMovieDTO.getTypes(), 
-				 createMovieDTO.getRating());
+		
+		if(movieRepository.getMovieByTitle( createMovieDTO.getTitle() ).isPresent()) {
+			return null;
+		}
+		
+		Movie movie = Movie.builder()
+				.title( createMovieDTO.getTitle() )
+				.durationOfMovieSeconds( createMovieDTO.getDuration() )
+				.type(createMovieDTO.getTypes())
+				.rating(createMovieDTO.getRating())
+				.build();
 		log.atInfo().log("Saving movie = {}", movie.toString());
 		return movieRepository.save( movie );
 	}
