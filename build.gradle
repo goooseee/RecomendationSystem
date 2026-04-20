@@ -1,8 +1,12 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '4.0.3'
+	id 'org.springframework.boot' version '4.0.5'
 	id 'io.spring.dependency-management' version '1.1.7'
 	id 'jacoco'
+}
+
+ext {
+	set('springCloudVersion', "2025.1.1")
 }
 
 group = 'com.example'
@@ -25,10 +29,13 @@ repositories {
 	mavenCentral()
 }
 
+
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 	//implementation 'org.springframework.boot:spring-boot-starter-aop'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -39,14 +46,33 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	implementation 'org.liquibase:liquibase-core'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-	implementation 'tools.jackson.datatype:jackson-datatype-jsr310:3.0.0-rc2'
-	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.2'
-	implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
-	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'
+	//implementation 'tools.jackson.datatype:jackson-datatype-jsr310:3.0.0-rc2'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.5'
 	testImplementation 'org.testcontainers:testcontainers:1.19.7'
     testImplementation 'org.testcontainers:junit-jupiter:1.19.7'
+    testImplementation 'com.h2database:h2'
+	implementation 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
+	implementation 'org.mapstruct:mapstruct:1.6.3'
+	implementation 'org.mapstruct:mapstruct-processor:1.6.3'
     //testImplementation 'com.redis.testcontainers:testcontainers-redis:2.2.2'
 }
+configurations.all {
+    resolutionStrategy.eachDependency { details ->
+        if (details.requested.group.startsWith('tools.jackson')) {
+            // Принудительно откатываем всё к 3.0.0, где WRITE_DATES_AS_TIMESTAMPS точно на месте
+            details.useVersion '3.0.0'
+        }
+    }
+}
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
 jacocoTestReport {
     dependsOn test // Отчет генерируется только после успешного прогона тестов
     
@@ -59,4 +85,14 @@ jacocoTestReport {
 tasks.named('test') {
 	useJUnitPlatform()
 	finalizedBy jacocoTestReport
+}
+tasks.register('copyMappersJars', Copy) {
+    // Явно указываем, что нам нужно всё из процессоров
+    from configurations.annotationProcessor
+    into "${projectDir}/mapstruct-jars"
+    
+    // Добавим проверку: если чего-то не хватает, Gradle скажет
+    doLast {
+        println "Файлы скопированы в mapstruct-jars. Проверь наличие mapstruct-processor!"
+    }
 }

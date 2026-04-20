@@ -13,9 +13,13 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJacksonJsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import tools.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import tools.jackson.databind.jsontype.PolymorphicTypeValidator;
-import tools.jackson.datatype.jsr310.JavaTimeModule;
+
 
 @Configuration
 @EnableCaching
@@ -30,7 +34,7 @@ public class RedisConfiguration {
         GenericJacksonJsonRedisSerializer serializer = GenericJacksonJsonRedisSerializer.create(builder->{
         	builder.enableDefaultTyping( ptv );
         	builder.customize( mapperBuilder -> {
-        		mapperBuilder.addModule( new JavaTimeModule() );
+        		mapperBuilder.findAndAddModules();
         	} );
         } );
         
@@ -51,13 +55,11 @@ public class RedisConfiguration {
         template.setConnectionFactory(connectionFactory);
         PolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder()
                 .allowIfBaseType(Object.class).build();
-
-        GenericJacksonJsonRedisSerializer serializer = GenericJacksonJsonRedisSerializer.create(builder->{
-        	builder.enableDefaultTyping( ptv );
-        	builder.customize( mapperBuilder -> {
-        		mapperBuilder.addModule( new JavaTimeModule() );
-        	} );
-        } );
+        
+        GenericJacksonJsonRedisSerializer serializer = GenericJacksonJsonRedisSerializer.builder()
+        		.customize(mapperBuilder -> {
+        			mapperBuilder.findAndAddModules();
+        }).build();
 
         template.setKeySerializer(RedisSerializer.string());
         template.setHashKeySerializer(RedisSerializer.string());

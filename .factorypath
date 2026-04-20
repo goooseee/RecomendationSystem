@@ -1,0 +1,6 @@
+<factorypath>
+    <factorypathentry kind="PLUGIN" id="org.eclipse.jst.ws.annotations.core" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="EXTJAR" id="C:\Users\4el\Downloads\RecomendationSystem\mapstruct-jars\lombok-1.18.42.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="EXTJAR" id="C:\Users\4el\Downloads\RecomendationSystem\mapstruct-jars\mapstruct-processor-1.6.0.Beta1.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="EXTJAR" id="C:\Users\4el\Downloads\RecomendationSystem\mapstruct-jars\lombok-mapstruct-binding-0.2.0.jar" enabled="true" runInBatchMode="false"/>
+</factorypath>

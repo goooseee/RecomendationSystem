@@ -36,6 +36,10 @@ public class WatchedHistoryService {
 				.stream().map(h -> h.getMovie().getId()).toList();
 	}
 	
+	public void saveAll(List<WatchedHistory> a) {
+		historyRepository.saveAll( a );
+	}
+	
 	public void addHistory(User user, CreateHistoryRequestDTO requestDTO, Movie movie) {
 		
 		WatchedHistory history = WatchedHistory.builder()

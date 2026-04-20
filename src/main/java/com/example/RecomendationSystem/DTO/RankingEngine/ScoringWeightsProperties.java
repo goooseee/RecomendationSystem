@@ -1,4 +1,4 @@
-package com.example.RecomendationSystem.DTO;
+package com.example.RecomendationSystem.DTO.RankingEngine;
 
 import java.util.Map;
 

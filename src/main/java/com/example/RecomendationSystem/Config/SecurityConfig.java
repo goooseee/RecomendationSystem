@@ -1,5 +1,7 @@
 package com.example.RecomendationSystem.Config;
 
+import java.time.Clock;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -37,6 +39,7 @@ public class SecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity http) {
 		
 		return http
+				.csrf( c -> c.disable() )
 				.authorizeHttpRequests( n -> 
 						n.requestMatchers("/login","/registration/**", "/css/**", "/refresh_token", "/")
 		    			.permitAll().anyRequest().permitAll() )

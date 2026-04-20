@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.example.RecomendationSystem.DTO.ScoringWeightsProperties;
+import com.example.RecomendationSystem.DTO.RankingEngine.ScoringWeightsProperties;
 import com.example.RecomendationSystem.Entity.Movie;
 import com.example.RecomendationSystem.Entity.User;
 import com.example.RecomendationSystem.Entity.UserPreference;
@@ -32,14 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 public class InterestScoringService {
 	
 	private final ScoringWeightsProperties properties;
-	
-	//TODO
-	//значит, веса лучше вытащить в файлы конфигурации,
-	//сделать еще один метод что будет создавать объект 
-	//computeIfAbsent использовать его для изменения мапы
-	//продолжаем расчитывать и и после перерасчета возвращаем измененный список и высший класс уже сам отправляет в бд новый список
-	//насчет изменения статуса в более высоком классе должен быть как раз список кандидатов и сначала передается в расчет и затем отправляется в изменения статуса и 
-	//еще этот метод в высшем классе должен быть аннотирован transactional
+
 	public List<UserPreference> calculateInterest(User user, List<UserPreference> preferences,
 			List<WatchedHistory> history) {
 		long startTime = System.currentTimeMillis();

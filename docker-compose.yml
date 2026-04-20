@@ -15,6 +15,18 @@ services:
       timeout: 5s
       retries: 5
 
+  # Сервис кэширования Redis
+  redis:
+    image: redis:7-alpine
+    container_name: movie_redis_container
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
   # Твоё Spring Boot приложение
   app:
     build: .
@@ -22,12 +34,20 @@ services:
     ports:
       - "8080:8080"
     environment:
-      # Переменные для Spring Boot (подставятся в application.properties)
+      # Настройки БД
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/RecomendSystem
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 192837
+      
+      # Настройки Redis (используем имя сервиса 'redis' вместо localhost)
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      
+      # Прочие настройки
       SPRING_LIQUIBASE_ENABLED: "true"
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate # Рекомендую сменить на validate для порядка
     depends_on:
       db:
+        condition: service_healthy
+      redis:
         condition: service_healthy

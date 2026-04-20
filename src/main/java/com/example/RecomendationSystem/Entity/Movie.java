@@ -9,6 +9,7 @@ import com.example.RecomendationSystem.Entity.Enum.Type;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -43,6 +44,7 @@ public class Movie {
 	@ElementCollection
 	@Enumerated(EnumType.STRING)
 	@CollectionTable(name = "movie_genres", joinColumns = @JoinColumn(name = "movie_id"))
+	@Column(name = "genre")
 	private List<Type> type;
 	
 	private long durationOfMovieSeconds;

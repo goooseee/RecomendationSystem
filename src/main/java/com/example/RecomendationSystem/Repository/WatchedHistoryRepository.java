@@ -18,8 +18,9 @@ public interface WatchedHistoryRepository extends JpaRepository<WatchedHistory, 
 	@Modifying 
 	@Query("DELETE FROM WatchedHistory w WHERE w.user.id = :userId")
 	public void deleteAllByUserId(@Param("userId") long userId);
-	
-	public void deleteWatchedHistoryByUserIdAndMovieId(long userId, long movieId);
+	@Modifying
+	@Query("DELETE FROM WatchedHistory w WHERE w.user.id = :userId AND w.movie.id = :movieId")
+	public void deleteWatchedHistoryByUserIdAndMovieId(@Param("userId") long userId,@Param("movieId") long movieId);
 	@Query("Select w from WatchedHistory w Join Fetch w.movie where w.user.id =:userId AND w.status IN :statuses")
 	public List<WatchedHistory> getByUserIdAndStatus(@Param("userId") long userId,@Param("statuses") List<CountStatus>  status);
 	

@@ -25,7 +25,7 @@ import lombok.Setter;
 @Getter
 @Builder
 @Entity
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id","type"})})
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id","types"})})
 @AllArgsConstructor
 public class UserPreference {
 	@Id

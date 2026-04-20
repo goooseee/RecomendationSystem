@@ -14,11 +14,11 @@ CREATE TABLE watched_history(
 id BIGSERIAL PRIMARY KEY,
 user_id BIGINT,
 movie_id BIGINT,
-react VARCHAR(50) DEFAULT 'didntreact',
+react VARCHAR(250),
 when_watched DATE,
 duration_of_movie_seconds BIGINT,
 times_watched INTEGER,
-status VARCHAR(50) DEFAULT 'NotCount',
+status VARCHAR(250),
 
 CONSTRAINT fk_history_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
 CONSTRAINT fk_history_movie FOREIGN KEY (movie_id) REFERENCES movies (id) ON DELETE CASCADE

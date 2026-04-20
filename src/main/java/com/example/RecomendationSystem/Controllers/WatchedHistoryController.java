@@ -50,8 +50,8 @@ public class WatchedHistoryController {
 		return watchedHistoryService.deleteAll(userId);
 	}
 	@DeleteMapping("/deleteHistoryById")
-	public List<WatchedHistory> deleteHistoryById(){
+	public List<WatchedHistory> deleteHistoryById(@RequestBody long movieId){
 		long userId = userService.getUserIdFromContext();
-		return watchedHistoryService.deleteAll(userId);
+		return watchedHistoryService.deleteById(userId, movieId);
 	}
 }

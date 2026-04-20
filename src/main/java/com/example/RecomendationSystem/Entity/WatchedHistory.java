@@ -11,6 +11,7 @@ import com.example.RecomendationSystem.Entity.Enum.Reaction;
 import com.example.RecomendationSystem.Entity.Enum.Type;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -45,16 +46,16 @@ public class WatchedHistory {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "movie_id")
 	private Movie movie;
-	
+	@Builder.Default
 	@Enumerated(EnumType.STRING)
 	private Reaction react = Reaction.didntreact;
-	
+	@Column(name = "when_watched")
 	private LocalDate whenWatched;
-	
+	@Column(name = "duration_seconds")
 	private long durationSeconds;
-	
+	@Column(name = "times_watched")
 	private int timesWatched;
-	
+	@Builder.Default
 	@Enumerated(EnumType.STRING)
 	private CountStatus status = CountStatus.NotCount;
 }
