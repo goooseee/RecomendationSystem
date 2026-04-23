@@ -5,13 +5,16 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.example.RecomendationSystem.Clients.ScoringClient;
 import com.example.RecomendationSystem.DTO.CreateMovieDTO;
+import com.example.RecomendationSystem.DTO.CreateMovieDTORequest;
 import com.example.RecomendationSystem.Entity.Movie;
 import com.example.RecomendationSystem.Entity.User;
 import com.example.RecomendationSystem.Exception.MovieNotFoundException;
 import com.example.RecomendationSystem.Repository.MovieRepository;
 import com.example.RecomendationSystem.Repository.WatchedHistoryRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 @Service
@@ -20,6 +23,8 @@ import lombok.extern.slf4j.Slf4j;
 public class MovieService {
 	
 	private final MovieRepository movieRepository;
+	
+	private final ScoringClient client;
 	
 	public Movie getById(long id) {
 		log.atDebug().log( "Getting movie with id = {}",id );
@@ -32,7 +37,7 @@ public class MovieService {
 		return movieRepository.getMovieByTitle( title )
 				.orElseThrow(() -> new MovieNotFoundException( "Movie not found with title: " + title ) );
 	}
-	
+	@Transactional
 	public Movie saveMovie(CreateMovieDTO createMovieDTO) {
 		log.atInfo().log( "Trying to save movie with request = {}",createMovieDTO.toString() );
 		
@@ -47,7 +52,12 @@ public class MovieService {
 				.rating(createMovieDTO.getRating())
 				.build();
 		log.atInfo().log("Saving movie = {}", movie.toString());
-		return movieRepository.save( movie );
+		Movie m = movieRepository.save( movie );
+		CreateMovieDTORequest dto = new CreateMovieDTORequest( m.getId(), m.getType(),
+										m.getDurationOfMovieSeconds(), m.getRating() );
+		client.addMovie( dto );
+		
+		return m;
 	}
 	public List<Movie> getAll(){
 		log.atDebug().log( "Getting all movies" );

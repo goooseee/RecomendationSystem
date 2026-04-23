@@ -45,7 +45,7 @@ public class UserActivityOrchestrator {
 		
 		watchedHistoryService.addHistory( user, requestDTO, movie );
 		
-		List<UserPreference> userPreferences = preferenceService.getByUserId( user.getId() );
+		//List<UserPreference> userPreferences = preferenceService.getByUserId( user.getId() );
 		
 		//System.out.println( userPreferences.get( 0 ).getType());
 		
@@ -55,9 +55,11 @@ public class UserActivityOrchestrator {
 //		System.out.println( new ScoringRequest( mapper.toHistoryDtoList( histories ),
 //						mapper.toProfile( user, userPreferences ) ).toString() );
 		
-		preferenceService.saveUserPreference(scoringClient.calculate( 
-				new ScoringRequest( mapper.toHistoryDtoList( histories ),
-						mapper.toProfile( user, userPreferences ) ) ), user);
+		scoringClient.calculate( user.getId() );
+		
+//		preferenceService.saveUserPreference(scoringClient.calculate( 
+//				new ScoringRequest( mapper.toHistoryDtoList( histories ),
+//						mapper.toProfile( user, userPreferences ) ) ), user);
 		
 		histories.forEach( t -> t.setStatus( CountStatus.Count ) );
 		

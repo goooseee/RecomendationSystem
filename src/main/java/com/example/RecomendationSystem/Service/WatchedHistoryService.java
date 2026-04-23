@@ -6,6 +6,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.RecomendationSystem.Clients.ScoringClient;
+import com.example.RecomendationSystem.DTO.CreateHistoryDTORequest;
 import com.example.RecomendationSystem.DTO.CreateHistoryRequestDTO;
 import com.example.RecomendationSystem.Entity.Movie;
 import com.example.RecomendationSystem.Entity.User;
@@ -21,6 +23,8 @@ import lombok.extern.slf4j.Slf4j;
 public class WatchedHistoryService {
 	
 	private final WatchedHistoryRepository historyRepository;
+	
+	private final ScoringClient client;
 	
 	public List<WatchedHistory> getHistory(long userId) {
 		log.atDebug().log( "Getting all history user with id = {}",userId );
@@ -39,7 +43,7 @@ public class WatchedHistoryService {
 	public void saveAll(List<WatchedHistory> a) {
 		historyRepository.saveAll( a );
 	}
-	
+	@Transactional
 	public void addHistory(User user, CreateHistoryRequestDTO requestDTO, Movie movie) {
 		
 		WatchedHistory history = WatchedHistory.builder()
@@ -52,7 +56,13 @@ public class WatchedHistoryService {
 				.whenWatched( LocalDate.now() )
 				.build();
 				
-		historyRepository.save( history );
+		WatchedHistory w = historyRepository.save( history );
+		CreateHistoryDTORequest dtoRequest = new 
+				CreateHistoryDTORequest(w.getUser().getId(),
+						w.getMovie().getId(),w.getReact(),
+						w.getDurationSeconds(),
+						w.getTimesWatched());
+		client.createHistory( dtoRequest );
 		log.atDebug().log( "Saving history" );
 	}
 	@Transactional

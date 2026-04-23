@@ -64,9 +64,9 @@ public class JwtService {
     private String generateToken(User user, long expireTime) {
     	long c = clock.millis();
     	JwtBuilder builder = Jwts.builder()
-    			.setSubject( user.getUsername() )
-    			.setIssuedAt( new Date(c) )
-    			.setExpiration( new Date(c+expireTime) ) 
+    			.subject( user.getUsername() )
+    			.issuedAt( new Date(c) )
+    			.expiration( new Date(c+expireTime) )
     			.signWith( getSigningKey() );
     	return builder.compact();
     }
@@ -80,12 +80,11 @@ public class JwtService {
     }
     
     private Claims extractAllClaims(String token) {
-    	JwtParserBuilder parser = Jwts.parserBuilder();
-    	parser.setSigningKey( getSigningKey() );
-    	
-    	return parser.build()
-    			.parseClaimsJws( token )
-    			.getBody();
+    	return Jwts.parser()
+    			.verifyWith( getSigningKey() )
+    			.build()
+    			.parseSignedClaims( token )
+    			.getPayload();
     }
     
     public <T> T extractClaims(String token, Function<Claims, T> resolver) {
