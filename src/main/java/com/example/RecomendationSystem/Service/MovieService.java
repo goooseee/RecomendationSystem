@@ -3,9 +3,11 @@ package com.example.RecomendationSystem.Service;
 import java.time.Duration;
 import java.util.List;
 
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
 import com.example.RecomendationSystem.Clients.ScoringClient;
+import com.example.RecomendationSystem.Config.RabbitMQConfig;
 import com.example.RecomendationSystem.DTO.CreateMovieDTO;
 import com.example.RecomendationSystem.DTO.CreateMovieDTORequest;
 import com.example.RecomendationSystem.Entity.Movie;
@@ -25,6 +27,8 @@ public class MovieService {
 	private final MovieRepository movieRepository;
 	
 	private final ScoringClient client;
+	
+	private final RabbitTemplate rabbitTemplate;
 	
 	public Movie getById(long id) {
 		log.atDebug().log( "Getting movie with id = {}",id );
@@ -53,9 +57,14 @@ public class MovieService {
 				.build();
 		log.atInfo().log("Saving movie = {}", movie.toString());
 		Movie m = movieRepository.save( movie );
+
 		CreateMovieDTORequest dto = new CreateMovieDTORequest( m.getId(), m.getType(),
-										m.getDurationOfMovieSeconds(), m.getRating() );
-		client.addMovie( dto );
+				m.getDurationOfMovieSeconds(), m.getRating() );
+		
+		rabbitTemplate.convertAndSend( RabbitMQConfig.MOVIE_EXCHANGE,
+										RabbitMQConfig.MOVIE_ROUTING_KEY,
+										dto);
+		//client.addMovie( dto );
 		
 		return m;
 	}

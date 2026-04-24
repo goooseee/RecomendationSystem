@@ -57,6 +57,7 @@ dependencies {
 	implementation 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
 	implementation 'org.mapstruct:mapstruct:1.6.3'
 	implementation 'org.mapstruct:mapstruct-processor:1.6.3'
+	implementation 'org.springframework.boot:spring-boot-starter-amqp'
     //testImplementation 'com.redis.testcontainers:testcontainers-redis:2.2.2'
 }
 configurations.all {
